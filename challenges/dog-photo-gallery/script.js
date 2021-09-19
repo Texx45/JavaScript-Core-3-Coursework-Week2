@@ -5,13 +5,22 @@ insertDog.src =
 renderDog.appendChild(insertDog);
 const generatePictureButton = document.querySelector(".button1");
 
-// https://images.dog.ceo/breeds/hound-basset/n02088238_10473.jpg
-
 generatePictureButton.addEventListener("click", () => {
   fetch("https://dog.ceo/api/breeds/image/random")
-    .then((response) => response.json())
-    .then((image) => {
-      insertDog.src = image.message;
+    .then((response) => {
+      if (response.status >= 200 && response.status <= 299) {
+        return response.json();
+      } else {
+        throw new Error(
+          `Encountered something unexpected: ${response.status} ${response.statusText}`
+        );
+      }
     })
-    .catch((error) => console.log("Fetch Error:", error));
+
+    .then((jsonResponse) => {
+      insertDog.src = jsonResponse.message;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
